@@ -1,8 +1,9 @@
-const Persons = ({ persons, searchTerm }) => {
+const Persons = ({ persons, searchTerm, deletePerson }) => {
   return searchTerm === ""
     ? persons.map((person) => (
-        <div key={person.name}>
-          {person.name} {person.number}
+        <div key={person.id}>
+          {person.name} {person.number}{" "}
+          <button onClick={() => deletePerson(person.id)}>Delete</button>
         </div>
       ))
     : persons
@@ -12,8 +13,9 @@ const Persons = ({ persons, searchTerm }) => {
             searchTerm !== ""
         )
         .map((person) => (
-          <div key={person.name}>
-            {person.name} {person.number}
+          <div key={person.id}>
+            {person.name} {person.number}{" "}
+            <button onClick={() => deletePerson(person.id)}>Delete</button>
           </div>
         ));
 };
