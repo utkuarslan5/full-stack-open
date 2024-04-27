@@ -1,11 +1,6 @@
 {
   "notes": [
     {
-      "id": "1",
-      "content": "HTML is easy",
-      "important": false
-    },
-    {
       "id": "2",
       "content": "Browser can execute only JavaScript",
       "important": false
@@ -18,11 +13,6 @@
     {
       "id": "7b7b",
       "content": "Wohoo",
-      "important": true
-    },
-    {
-      "id": "7fd0",
-      "content": "test func",
       "important": true
     }
   ]

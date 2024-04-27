@@ -3,16 +3,26 @@ import personService from "./services/persons";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newPerson, setNewPerson] = useState({ name: "", number: "" });
   const [searchTerm, setSearchTerm] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
-    personService.getAll().then((initialPersons) => {
-      setPersons(initialPersons);
-    });
+    personService
+      .getAll()
+      .then((initialPersons) => {
+        setPersons(initialPersons);
+      })
+      .catch((error) => {
+        setErrorMessage(`Error fetching persons: ${error.message}`);
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
+      });
   }, []);
 
   const addPerson = (event) => {
@@ -40,6 +50,16 @@ const App = () => {
                 )
               );
               setNewPerson({ name: "", number: "" });
+              setErrorMessage(`Updated ${returnedPerson.name}'s number`);
+              setTimeout(() => {
+                setErrorMessage(null);
+              }, 5000);
+            })
+            .catch((error) => {
+              setErrorMessage(`Error updating person: ${error.message}`);
+              setTimeout(() => {
+                setErrorMessage(null);
+              }, 5000);
             });
         } catch (error) {
           console.error("Error updating person:", error);
@@ -47,12 +67,28 @@ const App = () => {
       }
     } else {
       try {
-        personService.create(newPerson).then((createdPerson) => {
-          setPersons(persons.concat(createdPerson));
-          setNewPerson({ name: "", number: "" });
-        });
+        personService
+          .create(newPerson)
+          .then((createdPerson) => {
+            setPersons(persons.concat(createdPerson));
+            setNewPerson({ name: "", number: "" });
+            setErrorMessage(`Added ${createdPerson.name}`);
+            setTimeout(() => {
+              setErrorMessage(null);
+            }, 5000);
+          })
+          .catch((error) => {
+            setErrorMessage(`Error adding person: ${error.message}`);
+            setTimeout(() => {
+              setErrorMessage(null);
+            }, 5000);
+          });
       } catch (error) {
         console.error("Error adding person:", error);
+        setErrorMessage(`Error adding person: ${error.message}`);
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
       }
     }
   };
@@ -66,13 +102,31 @@ const App = () => {
     };
 
     try {
-      personService.update(id, updatedPerson).then((returnedPerson) => {
-        setPersons(
-          persons.map((person) => (person.id !== id ? person : returnedPerson))
-        );
-      });
+      personService
+        .update(id, updatedPerson)
+        .then((returnedPerson) => {
+          setPersons(
+            persons.map((person) =>
+              person.id !== id ? person : returnedPerson
+            )
+          );
+          setErrorMessage(`Updated ${returnedPerson.name}`);
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 5000);
+        })
+        .catch((error) => {
+          setErrorMessage(`Error updating person: ${error.message}`);
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 5000);
+        });
     } catch (error) {
       console.error("Error updating person:", error);
+      setErrorMessage(`Error updating person: ${error.message}`);
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
     }
   };
 
@@ -82,11 +136,27 @@ const App = () => {
 
     if (confirmDelete) {
       try {
-        personService.deleteEntry(id).then(() => {
-          setPersons(persons.filter((person) => person.id !== id));
-        });
+        personService
+          .deleteEntry(id)
+          .then(() => {
+            setPersons(persons.filter((person) => person.id !== id));
+            setErrorMessage(`Deleted ${personToDelete.name}`);
+            setTimeout(() => {
+              setErrorMessage(null);
+            }, 5000);
+          })
+          .catch((error) => {
+            setErrorMessage(`Error deleting person: ${error.message}`);
+            setTimeout(() => {
+              setErrorMessage(null);
+            }, 5000);
+          });
       } catch (error) {
         console.error("Error deleting person:", error);
+        setErrorMessage(`Error deleting person: ${error.message}`);
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
       }
     }
   };
@@ -106,6 +176,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={errorMessage} />
       <Filter
         searchTerm={searchTerm}
         handleSearchTermChange={handleSearchTermChange}

@@ -31,4 +31,14 @@ const update = (id, newObject) => {
     });
 };
 
-export default { getAll, create, update };
+const remove = (id) => {
+  const request = axios.delete(`${baseUrl}/${id}`);
+  return request
+    .then((response) => response.data)
+    .catch((error) => {
+      console.error("Error deleting note:", error);
+      throw error;
+    });
+};
+
+export default { getAll, create, update, remove };
